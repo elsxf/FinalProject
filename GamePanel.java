@@ -3,7 +3,7 @@
     import javax.swing.*;
     import java.util.*;
     
-    public class GamePanel extends JLayeredPane{
+    public class GamePanel extends JPanel{
         //layer 4 for tiles
         //layer 3 for fields(acid, fire)
         //layer 2 for furniture
@@ -19,9 +19,12 @@
         public GamePanel(){
             map1.mobList.add(e);
             addKeyListener(new KeyCheck());
-            setLayout(new GridBagLayout());//each screen should be 9x9 tiles with player in center
+            setLayout(new BorderLayout());
+            JLayeredPane viewPanel = new JLayeredPane();
+            viewPanel.setLayout(new GridBagLayout());//each screen should be 9x9 tiles with player in center
+            add(viewPanel, BorderLayout.CENTER);
             c = new GridBagConstraints();
-    
+            
             for(int i = 0;i<9;i++){
                 viewTiles[i]=(new JLabel[9]);
                 viewMobs[i]=(new JLabel[9]);
@@ -31,8 +34,8 @@
                     viewTiles[i][j]=new JLabel(map1.tileMap.get(p.getX()-4+i).get(p.getY()-4+j).getImage());//get tile as x,y's id, uses that to find correct sprite, puts sprite in jlabel
                     viewMobs[i][j]=new JLabel();
                     c.gridy=j;
-                    add(viewTiles[i][j],c,4);
-                    add(viewMobs[i][j],c,0);
+                    viewPanel.add(viewTiles[i][j],c,4);
+                    viewPanel.add(viewMobs[i][j],c,0);
                 }
             }
        viewMobs[4][4].setIcon(p.getImage());
@@ -74,15 +77,11 @@
                         //System.out.println("sight blocker detected");
                     }
                     viewTiles[4+j[0]][4+j[1]].setIcon(map1.tileMap.get(p.getX()+j[0]).get(p.getY()+j[1]).getImage());
-                    boolean drewMob=false;
-                    for(Mob m : map1.mobList){//draw mobs
-                        if(m.getX()==p.getX()+j[0]&&m.getY()==p.getY()+j[1]){
-                            viewMobs[4+j[0]][4+j[1]].setIcon(m.getImage());
-                            m.setTarget(p.getX(),p.getY());
-                            drewMob=true;
-                        }
+                    if(map1.tileMap.get(p.getX()+j[0]).get(p.getY()+j[1]).getMob()!=null){//check if there is mob on tile being drawn                   
+                        viewMobs[4+j[0]][4+j[1]].setIcon(map1.tileMap.get(p.getX()+j[0]).get(p.getY()+j[1]).getMob().getImage());
+                        map1.tileMap.get(p.getX()+j[0]).get(p.getY()+j[1]).getMob().setTarget(p.getX(),p.getY());
                     }
-                    if(!drewMob){
+                    else{
                         viewMobs[4+j[0]][4+j[1]].setIcon(null);
                     }
                 }
@@ -108,55 +107,51 @@
             public void keyPressed(KeyEvent e){
                 int key = e.getKeyCode();
                 if(key<=KeyEvent.VK_NUMPAD9&&key>=KeyEvent.VK_NUMPAD1){
-                    String xm = "0";
-                    String ym = "0";
+                    int xm = 0;
+                    int ym = 0;
                     if(key>=KeyEvent.VK_NUMPAD7&&key<=KeyEvent.VK_NUMPAD9){
-                        ym="-1";
+                        ym=-1;
                     }
                     if(key>=KeyEvent.VK_NUMPAD1&&key<=KeyEvent.VK_NUMPAD3){
-                        ym="1";
+                        ym=1;
                     }
                     switch(key){
                         case(KeyEvent.VK_NUMPAD7):
                         case(KeyEvent.VK_NUMPAD4):
                         case(KeyEvent.VK_NUMPAD1):
-                            xm="-1";
+                            xm=-1;
                             break;
                         case(KeyEvent.VK_NUMPAD9):
                         case(KeyEvent.VK_NUMPAD6):
                         case(KeyEvent.VK_NUMPAD3):
-                            xm="1";
+                            xm=1;
                             break;
     
                     }
-                if(!p.getMap().tileMap.get(p.getX()+Integer.parseInt(xm)).get(p.getY()+Integer.parseInt(ym)).testFlag("[IMPASSABLE]")){
-                    //System.out.println("works");
-                    return;//breaks out of function and incurs no move cost if player tries to move into impasssable space
+                p.move(xm,ym);
+                if(p.getWakeupTurn()==Turn.g_turn){
+                    repaint();
+                    return;
                 }
-                p.setNextAction(new String[]{"move", xm, ym});
-                p.setWakeupTurn(Turn.g_turn+p.getSpeed());
                 while(Turn.g_turn<=p.getWakeupTurn()){
                     for(Mob m: map1.mobList){
                         if(m.getWakeupTurn()<=Turn.g_turn){
                             m.doNextAction();
-                            m.setWakeupTurn(Turn.g_turn+m.getSpeed());
-                            System.out.println("monster wakeup:"+m.getWakeupTurn());
-                            System.out.println("turn:"+Turn.g_turn);
-                            xm="0";
-                            ym="0";
+                            xm=0;
+                            ym=0;
                             if(m.getX()>m.getTargetX()){
-                                xm="-1";
+                                xm=-1;
                             }
                             if(m.getX()<m.getTargetX()){
-                                xm="1";
+                                xm=1;
                             }
                             if(m.getY()>m.getTargetY()){
-                                ym="-1";
+                                ym=-1;
                             }
                             if(m.getY()<m.getTargetY()){
-                                ym="1";
+                                ym=1;
                             }
-                            m.setNextAction(new String[]{"move", xm, ym});
+                            m.move(xm,ym);
                         }
                     }
                     Turn.nextTurn();

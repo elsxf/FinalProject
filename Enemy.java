@@ -6,8 +6,8 @@ import java.util.*;
 public class Enemy extends Mob
 {
     public Enemy(int x, int y, Map map){
-        super(x,y,0,13,Sprites.ENEMY_SP,map);
-        this.setNextAction(new String[]{"move", "0", "0"});
+        super(x,y,0,13,5,Sprites.ENEMY_SP,new String("hostile"),new String[]{},map);
+        this.setNextAction(new String[]{"wait", "0", "0"});
     }
 
 }

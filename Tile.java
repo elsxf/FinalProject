@@ -10,6 +10,7 @@ public class Tile
     private int id;
     private ImageIcon image;
     private String[] flags;
+    private Mob mob;
     
     public Tile(int x, int y, int id, ImageIcon image, String[] flags){
         this.x=x;
@@ -37,6 +38,12 @@ public class Tile
     }
     public String[] getFlags(){
         return(this.flags);
+    }
+    public void setMob(Mob mob){
+        this.mob=mob;
+    }
+    public Mob getMob(){
+        return(this.mob);
     }
     public boolean testFlag(String test){//returns true if flag is not present
         return(java.util.Arrays.asList(this.flags).indexOf(test)==-1);
