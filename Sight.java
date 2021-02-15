@@ -54,4 +54,11 @@ public class Sight
     public static int randint(int a, int b){
         return((int)(Math.random()*(b-a+1)+a));
     }
+    public static int dice(int numDice, int dice, int mod){
+        int result = 0;
+        for(int i = 0;i<numDice;i++){
+            result+=randint(0,dice);
+        }
+        return(result+mod);
+    }
 }
