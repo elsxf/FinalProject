@@ -9,4 +9,12 @@ public class Player extends Mob
         super(x,y,0,10,25,Sprites.PLAYER_SP,new String("player"),new String[]{},map);
     }
 
+        public String toString(){
+        return("You");
+    }
+    
+    public void die(){
+        super.die();
+        System.exit(1);
+    }
 }

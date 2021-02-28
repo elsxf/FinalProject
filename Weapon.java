@@ -5,13 +5,15 @@ public class Weapon{
     private int damMod;//the 3 in 2d8+3
     private int hitMod;//to hit bonus/peanalty
     private String[] flags;
-    public Weapon(double speedMod, int numDice, int dice, int damMod, int hitMod,String[] flags){
+    private String name;
+    public Weapon(double speedMod, int numDice, int dice, int damMod, int hitMod,String[] flags, String name){
         this.speedMod=speedMod;
         this.numDice = numDice;
         this.dice=dice;
         this.damMod=damMod;
         this.flags=flags;
         this.hitMod=hitMod;
+        this.name = name;
     }
     public double getSpeedMod(){
         return(this.speedMod);
@@ -30,6 +32,9 @@ public class Weapon{
     }
     public boolean testFlag(String test){//returns true if flag is not present
         return(java.util.Arrays.asList(this.flags).indexOf(test)==-1);
+    }
+    public String toString(){
+        return(this.name);
     }
 
 }

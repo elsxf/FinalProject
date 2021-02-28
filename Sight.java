@@ -16,7 +16,8 @@ public class Sight
     }
     public static int[][] lineTest(int wr, int hr){//one of these numbers must be 4 or -4
         boolean wIs4=true;
-        int[][] results = new int[4][];
+        int[][] results = new int[5][];
+        results[0]=new int[]{0,0};
         int w = Math.abs(wr);
         int h = Math.abs(hr);
         if(h==4&&w!=4){
@@ -24,12 +25,12 @@ public class Sight
         }
         if(wIs4){//width is 4, iterate aonlg x axis, calculate height
             for(int i = 1;i<=4;i++){
-                results[i-1]=new int[]{i,(int)((double)(h)/(double)(w)*(double)(i)+.3)};//height at distance rounded to nearest whole number
+                results[i]=new int[]{i,(int)((double)(h)/(double)(w)*(double)(i)+.3)};//height at distance rounded to nearest whole number
             }
         }
         if(!wIs4){
             for(int i = 1;i<=4;i++){//height is 4, iterate along y axis, calculate width
-                results[i-1]=new int[]{(int)((double)(w)/(double)(h)*(double)(i)+.3),i};//height at distance rounded to nearest whole number
+                results[i]=new int[]{(int)((double)(w)/(double)(h)*(double)(i)+.3),i};//height at distance rounded to nearest whole number
             }    
         }
         if(wr<0){
