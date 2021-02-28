@@ -11,6 +11,7 @@ public class Tile
     private ImageIcon image;
     private String[] flags;
     private Mob mob;
+    private ImageIcon hitFlash=null;
     
     public Tile(int x, int y, int id, ImageIcon image, String[] flags){
         this.x=x;
@@ -44,6 +45,12 @@ public class Tile
     }
     public Mob getMob(){
         return(this.mob);
+    }
+    public void setHitFlash(ImageIcon hitFlash){
+        this.hitFlash = hitFlash;
+    }
+    public ImageIcon getHitFlash(){
+        return(this.hitFlash);
     }
     public boolean testFlag(String test){//returns true if flag is not present
         return(java.util.Arrays.asList(this.flags).indexOf(test)==-1);

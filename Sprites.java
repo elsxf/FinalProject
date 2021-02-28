@@ -12,4 +12,6 @@ public class Sprites{
    public static final ImageIcon PLAYER_SP = new ImageIcon("./sprites/player.png");
    public static final ImageIcon BLANK_SP = new ImageIcon("./sprites/blank.png");
    public static final ImageIcon ENEMY_SP = new ImageIcon("./sprites/enemy1.png");
+   public static final ImageIcon HITFLASH_SP = new ImageIcon("./sprites/hitflash.png");
+   public static final ImageIcon MISSFLASH_SP = new ImageIcon("./sprites/missflash.png");
 }
