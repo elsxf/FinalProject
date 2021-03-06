@@ -31,7 +31,14 @@ public class Brain
         ArrayList<int[]> testPoints = new ArrayList<int[]>();
         for(int i = -1;i<=1;i++){
             for(int j = -1;j<=1;j++){
-                Tile tile = this.mob.getMap().tileMap.get(mob.getX()+i).get(mob.getY()+j);
+                Tile tile = null;
+                try{
+                    tile = this.mob.getMap().tileMap.get(mob.getX()+i).get(mob.getY()+j);
+                }
+                catch(Exception e){
+                    
+                    continue;
+                }
                 //System.out.println("tile x:"+tile.getX()+",tile y:"+tile.getY()+" "+i+" "+j+tile.testFlag("[IMPASSABLE]"));
                 if(tile.testFlag("[IMPASSABLE]")){
                     testPoints.add(new int[]{i,j});

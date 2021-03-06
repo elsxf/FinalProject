@@ -11,12 +11,16 @@ public class Mob
     private int speed;
     private ImageIcon image;
     private Map map;
-    private String[] nextAction;
+    private Action_A nextAction;
     private long wakeupTurn=0;
     private int[] target=new int[2];//x coord of the tile the mob wants to reach
     private Brain brain;
     private int maxHealth;
     private int health;
+    private int maxOrgan;
+    private int organ;
+    private int maxBlood;
+    private int blood;
     private Weapon weapon;
     private String faction;
     private String[] flags;
@@ -26,6 +30,10 @@ public class Mob
         this.y=y;
         this.maxHealth=MaxHealth;
         this.health=MaxHealth;
+        this.maxOrgan=Math.max(1,MaxHealth/5);
+        this.organ=maxOrgan;
+        this.maxBlood = MaxHealth;
+        this.blood = maxBlood;
         this.target[0]=x;
         this.target[1]=y;
         this.speed=speed;
@@ -69,7 +77,7 @@ public class Mob
         this.y=y;
         this.map.tileMap.get(this.x).get(this.y).setMob(this);
     }
-    public void setNextAction(String[] action){
+    public void setNextAction(Action_A action){
         this.nextAction = action;
     }
     public void setWakeupTurn(long wakeup){
@@ -82,13 +90,16 @@ public class Mob
         return(java.util.Arrays.asList(this.flags).indexOf(test)==-1);
     }
     public Weapon getWeapon(){
+        if(this.weapon==null){
+            return(WeaponList.Fist_W);
+        }
         return(this.weapon);
     }
     public void setWeapon(Weapon weapon){
         this.weapon=weapon;
     }
-    public int getHealth(){
-        return(this.health);
+    public int[] getHealth(){
+        return(new int[]{this.health, this.organ, this.blood});
     }
     public int getMaxHealth(){
         return(this.maxHealth);
@@ -96,6 +107,7 @@ public class Mob
     public void setHealth(int health){
         this.health=Math.min(health,this.maxHealth);
         if(this.health<=0){
+            this.health=0;
             this.die();
         }
     }
@@ -103,62 +115,42 @@ public class Mob
         this.maxHealth=health;
     }
     public void doNextAction(){//parses nextAction string and executes it, action strings should follw format: "[function name] [arg0] [arg1]" etc e.x: "move", "-1", "0"
-        switch(this.nextAction[0]){
-            case("move"):
-                if(this.map.tileMap.get(this.x+Integer.parseInt(this.nextAction[1])).get(this.y+Integer.parseInt(this.nextAction[2])).getMob()==null){
-                    this.setCoord(Integer.parseInt(this.nextAction[1])+this.x,Integer.parseInt(this.nextAction[2])+this.y);
-                    break;
-                }
-            case("attack"):
-                Weapon using = this.weapon;
-                int damage = Sight.dice(using.getNumDice(),using.getDice(),using.getDamMod());
-                Tile attacked = this.map.tileMap.get(this.x+Integer.parseInt(this.nextAction[1])).get(this.y+Integer.parseInt(this.nextAction[2]));
-                if(attacked.getMob()==null){
-                    System.out.println(this+ " attacks but hits only air");
-                    UI.log.add(this+ " attacks but hits only air");
-                    attacked.setHitFlash(Sprites.MISSFLASH_SP);
-                    break;
-                }
-                System.out.println(attacked.getMob());
-                System.out.println(this+" attacks "+attacked.getMob()+" for "+damage+" damage");
-                UI.log.add(this+" attacks "+attacked.getMob()+" for "+damage+" damage");
-                attacked.getMob().setHealth(attacked.getMob().getHealth()-damage);             
-                attacked.setHitFlash(Sprites.HITFLASH_SP);
-                break;
-            case("wait")://do nothing
-                //System.out.println(this+" waits");
-                break;
-                
-        }
+        this.nextAction.doo();
+    }
+    public Action_A getNextAction(){
+        return this.nextAction;
     }
     
     public void move(int relX, int relY){//move 1 tile, does nothing if this would move mob thru impassable terrain
         //System.out.println(this+" "+this.x+" "+this.y+" "+this.map.tileMap.get(this.x).get(this.y).getMob());
-        if(this.weapon==null){
-            this.weapon = WeaponList.Fist_W;
-        }
         
         if(relX==0&&relY==0){
-            this.setNextAction(new String[]{"wait"});
+            this.setNextAction(new Action_A());
             this.setWakeupTurn(Turn.g_turn+5);
         }
         else if(this.map.tileMap.get(this.x+relX).get(this.y+relY).testFlag("[IMPASSABLE]")){
             if(this.map.tileMap.get(this.x+relX).get(this.y+relY).getMob()==null){//if not ipassable and not wait
-                this.setNextAction(new String[]{"move", String.valueOf(relX), String.valueOf(relY)});
+                this.setNextAction(new Move_A(this, relX, relY));
                 this.setWakeupTurn(Turn.g_turn+this.speed);
                 if(relX!=0&&relY!=0){
                     this.setWakeupTurn(Turn.g_turn+(long)(this.speed*Math.pow(2,.5)));
                 }
             }
             else{//if mob present
-                this.setNextAction(new String[]{"attack", String.valueOf(relX), String.valueOf(relY)});//x and y of tile being attacked(actually attack mob on that tile
-                this.setWakeupTurn(Turn.g_turn+(long)(this.speed*this.weapon.getSpeedMod()));
+                this.setNextAction(new Attack_A(this, relX, relY));//x and y of tile being attacked(actually attack mob on that tile
+                this.setWakeupTurn(Turn.g_turn+(long)(this.speed*this.getWeapon().getSpeedMod()));
             }
         }
+        else if(!this.map.tileMap.get(this.x+relX).get(this.y+relY).testFlag("[OPENABLE]")){
+            this.setNextAction(new Open_A(this, relX, relY));
+            this.setWakeupTurn(Turn.g_turn+(long)(this.speed));
+            //System.out.println(this+" open");
+        }
         else{//if wait(no moving or trying to move into impassable tile
-            this.setNextAction(new String[]{"wait"});
+            this.setNextAction(new Action_A());
             this.setWakeupTurn(Turn.g_turn+1);
-            System.out.println(this+"bumps into a wall");
+            //System.out.println(this+"bumps into a wall");
+            UI.log(this+" bumps into a wall");
         }
     }
     public void think(){//starting here(think->move->donextaction) keep in relative coords
@@ -168,6 +160,6 @@ public class Mob
     public void die(){
         this.map.mobList.remove(this);
         this.map.tileMap.get(this.x).get(this.y).setMob(null);
-        UI.log.add(this+ " dies");
+        UI.log(this+ " dies");
     }
 }

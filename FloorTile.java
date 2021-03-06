@@ -12,7 +12,7 @@ public class FloorTile extends Tile
     private String[] flags;
     public FloorTile( int x, int y)
     {
-        super(x,y,3,Sprites.FLOORTILE1_SP,new String[]{});
+        super(x,y,3,Sprites.FLOORTILE1_SP,new String[]{}, "Floor");
         this.x=x;
         this.y=y;
         if((int)(Math.random()*2)==0){

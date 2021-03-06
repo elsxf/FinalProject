@@ -1,5 +1,8 @@
-
-
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.util.*;
+    
 public class Sight
 {
     public Sight(){
@@ -61,5 +64,45 @@ public class Sight
             result+=randint(0,dice);
         }
         return(result+mod);
+    }
+    public static String toBars(int num, int max,int total){//expresses num/max as [total] bars
+        String result = "";
+        double wMax = (double)(max/(total*2));
+        for(int i = 0;i<total*2;i+=2){
+            if(num>=wMax*(i+1)){
+                result+="|";
+                continue;
+            }
+            if(num>=wMax*i){
+                result+="\\";
+                continue;
+            }
+            result+=" ";
+        }
+        return(result);
+    }
+    public static int[] toDirection(int key){//converts numpad to coords ex: 9 to +1,-1
+        int xm = 0;
+        int ym = 0;
+        if(key>=KeyEvent.VK_NUMPAD7&&key<=KeyEvent.VK_NUMPAD9){
+            ym=-1;
+        }
+        if(key>=KeyEvent.VK_NUMPAD1&&key<=KeyEvent.VK_NUMPAD3){
+            ym=1;
+        }
+        switch(key){
+            case(KeyEvent.VK_NUMPAD7):
+            case(KeyEvent.VK_NUMPAD4):
+            case(KeyEvent.VK_NUMPAD1):
+                xm=-1;
+                break;
+            case(KeyEvent.VK_NUMPAD9):
+            case(KeyEvent.VK_NUMPAD6):
+            case(KeyEvent.VK_NUMPAD3):
+                xm=1;
+                break;
+
+        }
+        return(new int[]{xm, ym});
     }
 }

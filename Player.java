@@ -14,7 +14,8 @@ public class Player extends Mob
     }
     
     public void die(){
-        super.die();
-        System.exit(1);
+        UI.log("YOU DIE");
+        UI.log("[Q]uit\t[R]ESTART");
+        UI.gameState = "gameOver";
     }
 }
