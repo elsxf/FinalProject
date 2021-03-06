@@ -13,7 +13,7 @@ public class WallTile extends Tile
     
     public WallTile(int x, int y)
     {
-        super(x,y,1,Sprites.WALLTILE1_SP,new String[]{"[IMPASSABLE]", "[SIGHT_BLOCKER]"});
+        super(x,y,1,Sprites.WALLTILE1_SP,new String[]{"[IMPASSABLE]", "[SIGHT_BLOCKER]"}, "Wall");
         this.x=x;
         this.y=y;
         if((int)(Math.random()*2)==0){

@@ -14,4 +14,6 @@ public class Sprites{
    public static final ImageIcon ENEMY_SP = new ImageIcon("./sprites/enemy1.png");
    public static final ImageIcon HITFLASH_SP = new ImageIcon("./sprites/hitflash.png");
    public static final ImageIcon MISSFLASH_SP = new ImageIcon("./sprites/missflash.png");
+   public static final ImageIcon DOORC_SP = new ImageIcon("./sprites/door.png");
+   public static final ImageIcon DOORO_SP = new ImageIcon("./sprites/doorO.png");
 }
