@@ -37,8 +37,8 @@ public class UI{
     public static JLayeredPane viewPanel = new JLayeredPane();
     //</viewpanel>
     //gameoverPanel>
-    public static JPanel gameoverPanel = new JPanel();
-    private static JTextArea gameOverText = new JTextArea("GAME OVER\n[Q]uit\t[R]ESTART");
+    public static JPanel charSheet = new JPanel();
+    private static JTextArea charSheetSkills = new JTextArea("skills");
 
     public static void status(int hp, int hpMax, Weapon weapon){
         barsArray[0].setText(Sight.toBars(hp,hpMax,5));
@@ -174,21 +174,39 @@ public class UI{
             int[][] testPoints=Sight.lineTest(i[0],i[1]);//every point along line to outer point
             boolean drawBlank = false;//when true, j loop will draw blank tiles instead of actual tiles
             for(int[] j : testPoints){
-                
-                try{
-                    theTile = m.tileMap.get(p.getX()+j[0]).get(p.getY()+j[1]);
-                }
-                catch(Exception e){
-                    //continue;
-                    theTile=null;
-                    drawBlank=true;
-                }
                 if(drawBlank){//draws blank, nothing else drawn, dont draw blank if another line has drawn the tile
                     if(viewTiles[4+j[0]][4+j[1]].getIcon()==null){
                         viewTiles[4+j[0]][4+j[1]].setIcon(Sprites.BLANK_SP);
                         viewMobs[4+j[0]][4+j[1]].setIcon(null);
                         viewEffects[4+j[0]][4+j[1]].setIcon(null);
                     }
+                    continue;
+                }
+                try{//catch outofbounds
+                    theTile = m.tileMap.get(p.getX()+j[0]).get(p.getY()+j[1]);
+                    if(theTile==null){//catch nulltile, put room code here
+                        viewTiles[4+j[0]][4+j[1]].setIcon(Sprites.BLANK_SP);
+                        int tX=p.getX()+j[0];
+                        int tY=p.getY()+j[1];
+                        int dir=0;
+                        if(tX/11>p.getX()/11){
+                            dir=1;
+                        }
+                        if(tX/11<p.getX()/11){
+                            dir=3;
+                        }
+                        if(tY/11>p.getY()/11){
+                            dir=2;
+                        }
+                        m.newRoom(p.getX()/11, p.getY()/11, dir);
+                        continue;
+                    }
+                }
+                catch(Exception e){
+                    //continue;
+                    theTile=null;
+                    drawBlank=true;
+                    viewTiles[4+j[0]][4+j[1]].setIcon(Sprites.WALLTILE1_SP);//draw walls onto outofbounds tiles to keep player form walking off
                     continue;
                 }
                 if(!theTile.testFlag("[SIGHT_BLOCKER]")){//if tile along line is sight blocker, draw that tile, but dont draw the rest
@@ -214,14 +232,24 @@ public class UI{
         viewTiles[4][4].setIcon(m.tileMap.get(p.getX()).get(p.getY()).getImage());
         status(p.getHealth()[0],p.getMaxHealth(),p.getWeapon());
         console.setText(console());
-        for(ArrayList<Tile> l: m.tileMap){
-                for(Tile t:l){
-                    t.setHitFlashTimer(t.getHitFlashTimer()-1);
-                    if(t.getHitFlashTimer()<=0){
-                        t.setHitFlash(null);
+        for(int i = 0; i<9; i++){
+            for(int j = 0; j<9; j++){
+                Tile t;
+                try{
+                    t = m.tileMap.get(p.getX()+(4-i)).get(p.getY()+(4-j));
+                    if(t==null){
+                        continue;
                     }
                 }
+                catch(Exception e){
+                    continue;
+                }
+                t.setHitFlashTimer(t.getHitFlashTimer()-1);
+                if(t.getHitFlashTimer()<=0){
+                    t.setHitFlash(null);
+                }
             }
+        }
     }
     public static JLayeredPane getViewPanel(){
         return(viewPanel);       
@@ -233,17 +261,24 @@ public class UI{
                 }
             }
     }
-    public static void makeGameOverPanel(){
-        gameoverPanel.setLayout(new BorderLayout());
-        gameoverPanel.setBackground(Color.black);
-        gameoverPanel.add(gameOverText, BorderLayout.CENTER);
-        gameOverText.setForeground(Color.white);
-        gameOverText.setEditable(false);
-        gameOverText.setBackground(Color.black);
-        gameOverText.setFont(new Font("Monospaced",0,25));        
+    public static void makeCharSheetPanel(){
+        charSheet.setLayout(new BorderLayout());
+        charSheet.setBackground(Color.black);
+        charSheet.add(charSheetSkills, BorderLayout.CENTER);
+        charSheetSkills.setForeground(Color.white);
+        charSheetSkills.setEditable(false);
+        charSheetSkills.setBackground(Color.black);
+        charSheetSkills.setFont(new Font("Monospaced",0,25));        
     }
-    public static JPanel getGameOverPanel(){
-        return(gameoverPanel);
+    public static JPanel getCharSheetPanel(){
+        return(charSheet);
+    }
+    public static void drawCharSheet(){
+        String text = "SKILLS:";
+        for(HashMap.Entry<String, int[]> entry : p.getSkills().entrySet()){
+            text+="\n"+Sight.minCharE(entry.getKey(), 10)+entry.getValue()[0]+" ("+Sight.minCharB(String.valueOf(entry.getValue()[1]%100), 3)+"%)";
+        }
+        charSheetSkills.setText(text);
     }
     
 }
