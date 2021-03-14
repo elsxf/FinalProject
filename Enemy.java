@@ -10,7 +10,7 @@ public class Enemy extends Mob
         this.setNextAction(new Action_A());
         super.setWeapon(WeaponList.Claws_W);
         this.getMap().mobList.add(this);
-        System.out.println(this.getMap().mobList.get(0));
+        //System.out.println(this.getMap().mobList.get(0));
     }
     
     public String toString(){

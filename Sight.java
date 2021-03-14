@@ -61,7 +61,7 @@ public class Sight
     public static int dice(int numDice, int dice, int mod){
         int result = 0;
         for(int i = 0;i<numDice;i++){
-            result+=randint(0,dice);
+            result+=randint(1,dice);
         }
         return(result+mod);
     }
@@ -73,11 +73,11 @@ public class Sight
                 result+="|";
                 continue;
             }
-            if(num>=wMax*i){
+            if(num>wMax*i){
                 result+="\\";
                 continue;
             }
-            result+=" ";
+            result+=".";
         }
         return(result);
     }
@@ -104,5 +104,16 @@ public class Sight
 
         }
         return(new int[]{xm, ym});
+    }
+    public static double skillCalc(int a, int b){
+        return( Math.pow(2,a-b));
+    }
+    public static String minCharE(String base, int num){
+        for(int i = 0; base.length()<num; base+=" "){}
+        return base;
+    }
+    public static String minCharB(String base, int num){
+        for(int i = 0; base.length()<num; base=" "+base){}
+        return base;
     }
 }

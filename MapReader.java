@@ -7,7 +7,7 @@ import java.util.*;
 
 public class MapReader{
 
-    public static ArrayList<ArrayList<Tile>> readFile(String fileName){
+    public static ArrayList<ArrayList<Tile>> readFile(String fileName, Map map, int Ox, int Oy){
     ArrayList<ArrayList<Tile>> m = new ArrayList<ArrayList<Tile>>();
     try {
       File mapFile = new File(fileName);
@@ -16,6 +16,19 @@ public class MapReader{
       while (reader.hasNextLine()) {
         String data = reader.nextLine();
         if(data.equals("[MOBS]")){
+            while (reader.hasNextLine()) {
+                data = reader.nextLine();
+                String[] form = data.split(" ");//format
+                Enemy e= null;
+                switch(form[0]){
+                    case "1":
+                        e = new Enemy(Integer.valueOf(form[1])+Ox*11, Integer.valueOf(form[2])+Oy*11, map);
+                        //map.mobList.add(e);
+                        //e.giveMap();
+                        break;
+                }
+                
+            }
             break;
         }
         if(data.equals("[TILES]")){
@@ -39,7 +52,13 @@ public class MapReader{
             if(t==null){
                 //System.out.println(i+" "+j);
             }
-            m.get(j).add(t);
+            try{
+                m.get(j).add(t);
+            }
+            catch(Exception e){
+                m.add(new ArrayList<Tile>());
+                m.get(j).add(t);
+            }
         }
         i++;
       }

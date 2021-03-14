@@ -5,6 +5,11 @@ public class Close_A extends Action_A{
         super.mob=m;
     }
     public void doo(){//do is a restriceted word
-        mob.getMap().tileMap.get(mob.getX()+this.relX).get(mob.getY()+this.relY).close();               
+        try{
+            mob.getMap().tileMap.get(mob.getX()+this.relX).get(mob.getY()+this.relY).close();
+        }
+        catch(Exception e){
+            UI.log("can't close that");
+        }
     }
 }
