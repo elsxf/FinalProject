@@ -26,7 +26,10 @@ public class Brain
         //begin ai, minpoint is target square
         if(minPoint[0]==0&&minPoint[1]==0){//if on tile, move randomly(wander)
             //System.out.println("wander");
-            mob.setTarget(mob.getX()+Sight.randint(-2,1),mob.getY()+Sight.randint(-2,1));
+            Mob mmmob = mob;
+            //System.out.println(mmmob);
+            MobProperty info = mob.getInfo();
+            info.setTarget(mob.getX()+Sight.randint(-2,1),mob.getY()+Sight.randint(-2,1));
             return(new int[]{Sight.randint(-2,1),Sight.randint(-2,1)}); 
         }
         ArrayList<int[]> testPoints = new ArrayList<int[]>();
@@ -41,7 +44,10 @@ public class Brain
                     continue;
                 }
                 //System.out.println("tile x:"+tile.getX()+",tile y:"+tile.getY()+" "+i+" "+j+tile.testFlag("[IMPASSABLE]"));
-                if(tile.testFlag("[IMPASSABLE]")){
+                if(tile==null){
+                    continue;
+                }
+                if(tile.getInfo().testFlag("[IMPASSABLE]")){
                     testPoints.add(new int[]{i,j});
                 }
             }
