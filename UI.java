@@ -7,7 +7,7 @@ public class UI{
     private static ArrayList<String> log = new ArrayList<String>();
     public static String gameState = "view";//what decides whihc panel is drawn
     
-    private static Player p;
+    private static Mob p;
     private static Map m;
     //layer for tiles
     private static int tilelayer=5;
@@ -28,7 +28,7 @@ public class UI{
     private static JLabel[][] viewEffects = new JLabel[9][];
     private static JLabel[] textArray = new JLabel[5];
     private static JLabel[] barsArray = new JLabel[5];
-    private static JLabel[] otherArray = new JLabel[4];
+    private static JLabel[] otherArray = new JLabel[5];
     private static JPanel statusText = new JPanel();
     private static JPanel statusBars = new JPanel();
     private static JPanel statusOther = new JPanel();
@@ -36,21 +36,27 @@ public class UI{
     private static GridBagConstraints c;
     public static JLayeredPane viewPanel = new JLayeredPane();
     //</viewpanel>
-    //gameoverPanel>
+    //<inventorypanel>
     public static JPanel charSheet = new JPanel();
     private static JTextArea charSheetSkills = new JTextArea("skills");
+    //</inventorypanel>
+    //<mapPanel>
+    public static JPanel mapPanel = new JPanel();
+    public static JTextArea mapText = new JTextArea("map");
+    //</mapPanel>
 
     public static void status(int hp, int hpMax, Weapon weapon){
         barsArray[0].setText(Sight.toBars(hp,hpMax,5));
-        if((double)(hp)/hpMax>=.75){
+        if((double)(hp)/hpMax>=.95){
             barsArray[0].setForeground(Color.green);
         }
-        else if((double)(hp)/hpMax<=.25){
+        else if((double)(hp)/hpMax<=.35){
             barsArray[0].setForeground(Color.red);
         }
         else{
             barsArray[0].setForeground(Color.yellow);
         }
+        otherArray[0].setText(" Weapon: "+weapon);
     }
     
     public static String console(){
@@ -69,7 +75,7 @@ public class UI{
     public static void setMap(Map map){
         m=map;
     }
-    public static void setPlayer(Player player){
+    public static void setPlayer(Mob player){
         p=player;
     }
     
@@ -121,7 +127,13 @@ public class UI{
             j2.setFont(new Font("Monospaced",0,15));
             statusBars.add(j2, c);
             barsArray[i]=j2;
-            
+            //others jlabels
+            JLabel j3 = new JLabel();
+            j3.setForeground(Color.white);
+            j3.setFont(new Font("Monospaced",0,15));
+            statusOther.add(j3,c);
+            otherArray[i]=j3;
+           
         }
         
         
@@ -209,34 +221,34 @@ public class UI{
                     viewTiles[4+j[0]][4+j[1]].setIcon(Sprites.WALLTILE1_SP);//draw walls onto outofbounds tiles to keep player form walking off
                     continue;
                 }
-                if(!theTile.testFlag("[SIGHT_BLOCKER]")){//if tile along line is sight blocker, draw that tile, but dont draw the rest
+                if(!theTile.getInfo().testFlag("[SIGHT_BLOCKER]")){//if tile along line is sight blocker, draw that tile, but dont draw the rest
                     drawBlank=true;
                     //System.out.println("sight blocker detected");
                 }
-                viewTiles[4+j[0]][4+j[1]].setIcon(theTile.getImage());
-                if(theTile.getMob()!=null){//check if there is mob on tile being drawn                   
-                    viewMobs[4+j[0]][4+j[1]].setIcon(theTile.getMob().getImage());
-                    theTile.getMob().setTarget(p.getX(),p.getY());
+                viewTiles[4+j[0]][4+j[1]].setIcon(theTile.getInfo().getImage());
+                if(theTile.getInfo().getMob()!=null){//check if there is mob on tile being drawn                   
+                    viewMobs[4+j[0]][4+j[1]].setIcon(theTile.getInfo().getMob().getInfo().getImage());
+                    theTile.getInfo().getMob().getInfo().setTarget(p.getX(),p.getY());
                 }
                 else{
                     viewMobs[4+j[0]][4+j[1]].setIcon(null);
                 }
-                if(theTile.getHitFlash()!=null){//check if tile has a hitflash
-                     viewEffects[4+j[0]][4+j[1]].setIcon(theTile.getHitFlash());
+                if(theTile.getInfo().getHitFlash()!=null){//check if tile has a hitflash
+                     viewEffects[4+j[0]][4+j[1]].setIcon(theTile.getInfo().getHitFlash());
                 }
                 else{
                     viewEffects[4+j[0]][4+j[1]].setIcon(null);
                 }
             }
         }
-        viewTiles[4][4].setIcon(m.tileMap.get(p.getX()).get(p.getY()).getImage());
-        status(p.getHealth()[0],p.getMaxHealth(),p.getWeapon());
+        viewTiles[4][4].setIcon(m.tileMap.get(p.getX()).get(p.getY()).getInfo().getImage());
+        status(p.getInfo().getHealth()[0],p.getInfo().getMaxHealth(),p.getInfo().getWeapon());
         console.setText(console());
         for(int i = 0; i<9; i++){
             for(int j = 0; j<9; j++){
-                Tile t;
+                TileProperty t;
                 try{
-                    t = m.tileMap.get(p.getX()+(4-i)).get(p.getY()+(4-j));
+                    t = m.tileMap.get(p.getX()+(4-i)).get(p.getY()+(4-j)).getInfo();
                     if(t==null){
                         continue;
                     }
@@ -257,14 +269,14 @@ public class UI{
     public static void hitVoid(){
         for(ArrayList<Tile> l: m.tileMap){
                 for(Tile t:l){
-                    t.setHitFlash(null);
+                    t.getInfo().setHitFlash(null);
                 }
             }
     }
     public static void makeCharSheetPanel(){
         charSheet.setLayout(new BorderLayout());
         charSheet.setBackground(Color.black);
-        charSheet.add(charSheetSkills, BorderLayout.CENTER);
+        charSheet.add(charSheetSkills, BorderLayout.PAGE_START);
         charSheetSkills.setForeground(Color.white);
         charSheetSkills.setEditable(false);
         charSheetSkills.setBackground(Color.black);
@@ -275,10 +287,37 @@ public class UI{
     }
     public static void drawCharSheet(){
         String text = "SKILLS:";
-        for(HashMap.Entry<String, int[]> entry : p.getSkills().entrySet()){
-            text+="\n"+Sight.minCharE(entry.getKey(), 10)+entry.getValue()[0]+" ("+Sight.minCharB(String.valueOf(entry.getValue()[1]%100), 3)+"%)";
+        for(HashMap.Entry<String, int[]> entry : p.getInfo().getSkills().entrySet()){
+            text+="\n"+Sight.minCharE(entry.getKey(), 10)+entry.getValue()[0]+" ("+Sight.minCharB(String.valueOf(entry.getValue()[1]%100), 2)+"%)";
         }
         charSheetSkills.setText(text);
     }
+    public static void makeMapPanel(){
+        mapPanel.setBackground(Color.black);
+        mapPanel.add(mapText);
+        mapText.setForeground(Color.white);
+        mapText.setEditable(false);
+        mapText.setBackground(Color.black);
+        mapText.setFont(new Font("Monospaced",0,25));  
+        mapText.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+    }
+    public static JPanel getMapPanel(){
+        return mapPanel;
+    }
+    public static void drawMapPanel(){
+        String text = "MAP:";
+        for(int i = 0; i<m.theRooms[0].length; i++){
+            text+="\n";
+            for(int j = 0; j<m.theRooms.length; j++){
+                if(m.theRooms[j][i]==null){
+                    text+=" ";
+                    continue;
+                }
+                text+=m.theRooms[j][i].getSymbol();
+            }
+        }
+        mapText.setText(text);
+    }
+
     
 }

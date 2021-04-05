@@ -7,7 +7,7 @@ import java.util.*;
 
 public class MapReader{
 
-    public static ArrayList<ArrayList<Tile>> readFile(String fileName, Map map, int Ox, int Oy){
+    public static ArrayList<ArrayList<Tile>> readFile(String fileName, Room room, int Ox, int Oy){
     ArrayList<ArrayList<Tile>> m = new ArrayList<ArrayList<Tile>>();
     try {
       File mapFile = new File(fileName);
@@ -19,35 +19,35 @@ public class MapReader{
             while (reader.hasNextLine()) {
                 data = reader.nextLine();
                 String[] form = data.split(" ");//format
-                Enemy e= null;
-                switch(form[0]){
-                    case "1":
-                        e = new Enemy(Integer.valueOf(form[1])+Ox*11, Integer.valueOf(form[2])+Oy*11, map);
-                        //map.mobList.add(e);
-                        //e.giveMap();
-                        break;
+                int[] result = new int[form.length];
+                for(int x = 0; x < form.length; x++){
+                    result[x] = Integer.parseInt(form[x]);
                 }
-                
+                //System.out.println("___________");
+                for(int x = 0; x<room.getRotate(); x++){ 
+                    //System.out.println(result[1]+" "+result[2]);
+                    int p1 = result[1]-5;
+                    int p2 = result[2]-5;
+                    result[1] = -p2+5;
+                    result[2] = p1+5;
+                }
+                MobProperty po =  new MobProperty(MobList.ALLMOBS[result[0]]);
+                Mob e = new Mob(result[1]+Ox*11, result[2]+Oy*11, room.getMap(),po);
+                //System.out.println("read: "+e.getInfo());
             }
             break;
+        }
+        if(data.equals("[SYMBOL]")){
+            room.setSymbol(reader.nextLine().charAt(room.getRotate()));
+            continue;
         }
         if(data.equals("[TILES]")){
             continue;
         }
         //System.out.println(data);
         for(int j = 0; j<data.length();j++){
-            Tile t=null;
-            switch(data.charAt(j)){
-                case '0':
-                    t = new FloorTile(j,i);
-                    break;
-                case '1':
-                    t = new WallTile(j,i);
-                    break;
-                case '2':
-                    t = new DoorTile(j,i);
-                    break;
-            }
+            TileProperty p = new TileProperty(TileList.ALLTILES[Character.getNumericValue(data.charAt(j))]);
+            Tile t=new Tile(j,i,p);
             //System.out.println(t);
             if(t==null){
                 //System.out.println(i+" "+j);

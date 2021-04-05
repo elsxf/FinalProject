@@ -3,8 +3,9 @@ public class Open_A extends Action_A{
         super.relX=relx;
         super.relY=rely;
         super.mob=m;
+        super.actionCost=m.getInfo().getSpeed();
     }
     public void doo(){//do is a restriceted word
-        mob.getMap().tileMap.get(mob.getX()+this.relX).get(mob.getY()+this.relY).open();               
+        mob.getMap().tileMap.get(mob.getX()+this.relX).get(mob.getY()+this.relY).getInfo().open();               
     }
 }

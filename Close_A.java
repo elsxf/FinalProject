@@ -3,13 +3,19 @@ public class Close_A extends Action_A{
         super.relX=relx;
         super.relY=rely;
         super.mob=m;
+        super.actionCost=m.getInfo().getSpeed()/2;
     }
     public void doo(){//do is a restriceted word
-        try{
-            mob.getMap().tileMap.get(mob.getX()+this.relX).get(mob.getY()+this.relY).close();
+        if(mob.getMap().tileMap.get(mob.getX()+this.relX).get(mob.getY()+this.relY).getInfo().getMob()==null){
+            try{
+                mob.getMap().tileMap.get(mob.getX()+this.relX).get(mob.getY()+this.relY).getInfo().close();
+            }
+            catch(Exception e){
+                UI.log("can't close that");
+            }
         }
-        catch(Exception e){
-            UI.log("can't close that");
+        else{
+            UI.log(mob.getMap().tileMap.get(mob.getX()+this.relX).get(mob.getY()+this.relY).getInfo()+" can't be closed with something in the way");
         }
     }
 }

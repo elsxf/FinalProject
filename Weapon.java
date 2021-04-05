@@ -27,7 +27,7 @@ public class Weapon{
     public int getDamMod(){
         return(this.damMod);
     }
-    public int gethitMod(){
+    public int getHitMod(){
         return(this.hitMod);
     }
     public boolean testFlag(String test){//returns true if flag is not present

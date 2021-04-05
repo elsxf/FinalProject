@@ -58,6 +58,9 @@ public class Sight
     public static int randint(int a, int b){
         return((int)(Math.random()*(b-a+1)+a));
     }
+    public static int minMax(int min, int max, int num){
+        return(Math.max(min, Math.min(max, num)));
+    }
     public static int dice(int numDice, int dice, int mod){
         int result = 0;
         for(int i = 0;i<numDice;i++){
@@ -105,8 +108,8 @@ public class Sight
         }
         return(new int[]{xm, ym});
     }
-    public static double skillCalc(int a, int b){
-        return( Math.pow(2,a-b));
+    public static double skillCalc(int a){
+        return( Math.max(1,a));
     }
     public static String minCharE(String base, int num){
         for(int i = 0; base.length()<num; base+=" "){}
@@ -116,4 +119,11 @@ public class Sight
         for(int i = 0; base.length()<num; base=" "+base){}
         return base;
     }
+    public static HashMap<String, int[]> copySkills(HashMap<String, int[]> original){
+        HashMap<String, int[]> copy = new HashMap<String, int[]>();
+        for (HashMap.Entry<String, int[]> entry : original.entrySet()){
+            copy.put(entry.getKey(), new int[]{entry.getValue()[0], entry.getValue()[1]});
+        }
+        return copy;
+}
 }
