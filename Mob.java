@@ -71,7 +71,7 @@ public class Mob
             //UI.log(this+" bumps into a wall");
             return;
         }
-        if(relX==0&&relY==0){
+        if(this.map.tileMap.get(this.x+relX).get(this.y+relY)==null||(relX==0&&relY==0)){
             info.setNextAction(new Action_A());
         }
         else if(this.map.tileMap.get(this.x+relX).get(this.y+relY).getInfo().testFlag("[IMPASSABLE]")){

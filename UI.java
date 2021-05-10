@@ -43,6 +43,8 @@ public class UI{
     //<mapPanel>
     public static JPanel mapPanel = new JPanel();
     public static JTextArea mapText = new JTextArea("map");
+    public static int mapTextBlinkTimer = 0;
+    public static boolean mapTextBlinkHolder = false;
     //</mapPanel>
 
     public static void status(int hp, int hpMax, Weapon weapon){
@@ -66,11 +68,14 @@ public class UI{
         }
         return(result);
     }
-     public static void log(String message){
+    public static void log(String message){
          if(gameState!="gameOver"){
              log.add(message);
             }
         }
+    public static void clearLog(){
+        log = new ArrayList<String>();
+    }
     
     public static void setMap(Map map){
         m=map;
@@ -306,11 +311,23 @@ public class UI{
     }
     public static void drawMapPanel(){
         String text = "MAP:";
+        int pcoordx=p.getX()/11;
+        int pcoordy=p.getY()/11;
+        mapTextBlinkTimer--;
+        if(mapTextBlinkTimer<=0){
+            mapTextBlinkHolder^=true;
+            mapTextBlinkTimer = 20;//this number * 30 milliseconds
+        }
+        //for some reason in this loop, i is y, j is x.
         for(int i = 0; i<m.theRooms[0].length; i++){
             text+="\n";
             for(int j = 0; j<m.theRooms.length; j++){
                 if(m.theRooms[j][i]==null){
                     text+=" ";
+                    continue;
+                }
+                if((j==pcoordx&&i==pcoordy)&&mapTextBlinkHolder){
+                    text+="@";//you are here zymbol
                     continue;
                 }
                 text+=m.theRooms[j][i].getSymbol();

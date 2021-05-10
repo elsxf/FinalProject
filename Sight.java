@@ -70,7 +70,7 @@ public class Sight
     }
     public static String toBars(int num, int max,int total){//expresses num/max as [total] bars
         String result = "";
-        double wMax = (double)(max/(total*2));
+        double wMax = ((double)max/(total*2));
         for(int i = 0;i<total*2;i+=2){
             if(num>=wMax*(i+1)){
                 result+="|";
@@ -84,24 +84,44 @@ public class Sight
         }
         return(result);
     }
+    public static boolean isDirection(int key){
+        if(key==KeyBindings.k_nw||
+            key==KeyBindings.k_n||
+            key==KeyBindings.k_ne||
+            key==KeyBindings.k_w||
+            key==KeyBindings.k_W||
+            key==KeyBindings.k_e||
+            key==KeyBindings.k_sw||
+            key==KeyBindings.k_s||
+            key==KeyBindings.k_se){
+            return true;}
+        return false;
+    }
     public static int[] toDirection(int key){//converts numpad to coords ex: 9 to +1,-1
         int xm = 0;
         int ym = 0;
-        if(key>=KeyEvent.VK_NUMPAD7&&key<=KeyEvent.VK_NUMPAD9){
-            ym=-1;
-        }
-        if(key>=KeyEvent.VK_NUMPAD1&&key<=KeyEvent.VK_NUMPAD3){
-            ym=1;
+        switch(key){
+            case(KeyBindings.k_nw):
+            case(KeyBindings.k_n):
+            case(KeyBindings.k_ne):
+                ym=-1;
+                break;
+            case(KeyBindings.k_sw):
+            case(KeyBindings.k_s):
+            case(KeyBindings.k_se):
+                ym=1;
+                break;
+
         }
         switch(key){
-            case(KeyEvent.VK_NUMPAD7):
-            case(KeyEvent.VK_NUMPAD4):
-            case(KeyEvent.VK_NUMPAD1):
+            case(KeyBindings.k_nw):
+            case(KeyBindings.k_w):
+            case(KeyBindings.k_sw):
                 xm=-1;
                 break;
-            case(KeyEvent.VK_NUMPAD9):
-            case(KeyEvent.VK_NUMPAD6):
-            case(KeyEvent.VK_NUMPAD3):
+            case(KeyBindings.k_ne):
+            case(KeyBindings.k_e):
+            case(KeyBindings.k_se):
                 xm=1;
                 break;
 

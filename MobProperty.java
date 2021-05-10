@@ -171,6 +171,9 @@ public class MobProperty extends Property
         return(this.skills);
     }
     public void doNextAction(){//parses nextAction string and executes it, action strings should follw format: "[function name] [arg0] [arg1]" etc e.x: "move", "-1", "0"
+        if(this.mob.getMap().tileMap.get(this.mob.getX()).get(this.mob.getY())==null){
+            this.setNextAction(new Action_A());
+        }
         this.nextAction.doo();
         if(this.healTimer<=Turn.g_turn){
             this.setHealth(this.getHealth()[0]+2);

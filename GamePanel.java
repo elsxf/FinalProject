@@ -5,20 +5,27 @@
     
     public class GamePanel extends JPanel{
         
-        Map map1 = new Map();//MapReader.makeMap("./raw/Test_M.txt");
-        Mob p = new Mob(5+map1.getStart()[0]*11,5+map1.getStart()[1]*11,map1, new MobProperty(MobList.ALLMOBS[0]));
+        Map map1;// = new Map();//MapReader.makeMap("./raw/Test_M.txt");
+        Mob p;// = new Mob(5+map1.getStart()[0]*11,5+map1.getStart()[1]*11,map1, new MobProperty(MobList.ALLMOBS[0]));
         public GamePanel(){
             UI.makeViewPanel();
             UI.makeCharSheetPanel();
             UI.makeMapPanel();
-            UI.setMap(map1);
-            UI.setPlayer(p);
-            p.giveMap();
             //map1.mobList.add(e);
             setBackground(Color.BLACK);
             addKeyListener(new KeyCheck());
             setLayout(new BorderLayout());
-           
+            this.gameStart();
+        }
+        
+        public void gameStart(){
+            map1 = new Map();
+            p = new Mob(5+map1.getStart()[0]*11,5+map1.getStart()[1]*11,map1, new MobProperty(MobList.ALLMOBS[0]));
+            UI.setMap(map1);
+            UI.setPlayer(p);
+            p.giveMap();
+            UI.gameState = "view";
+            UI.clearLog();
         }
         
         
@@ -59,11 +66,11 @@
                 int key = e.getKeyCode();
                 
                 if(UI.gameState.equals("view")){ 
-                    if(key<=KeyEvent.VK_NUMPAD9&&key>=KeyEvent.VK_NUMPAD1){
+                    if(Sight.isDirection(key)){
                         int[] m = Sight.toDirection(key);
                         p.move(m[0],m[1]);
                     }
-                    if(key==KeyEvent.VK_C){//close command
+                    if(key==KeyBindings.k_close){//close command
                         ArrayList<ArrayList<Integer>> poss = p.testTileFlag("[CLOSEABLE]");
                         if(poss.size()==0){//nothing to close
                             UI.log("nothing to close nearby");
@@ -82,7 +89,7 @@
                         UI.gameState="charSheet";
                         return;
                     }
-                    if(key==KeyEvent.VK_M){
+                    if(key==KeyBindings.k_map){
                         UI.gameState="map";
                         return;
                     }
@@ -92,10 +99,13 @@
                     if(key==KeyEvent.VK_Q){
                         System.exit(0);
                     }
+                    if(key==KeyEvent.VK_R){
+                        gameStart();
+                    }
                 }
                 
                 if(UI.gameState.equals("waitForDir")){
-                    if(key<=KeyEvent.VK_NUMPAD9&&key>=KeyEvent.VK_NUMPAD1){
+                    if(Sight.isDirection(key)){
                         int[] m = Sight.toDirection(key);
                         if(map1.tileMap.get(p.getX()+m[0]).get(p.getY()+m[1]).getInfo().testFlag("[CLOSEABLE]")){
                             UI.gameState="view";
@@ -111,13 +121,13 @@
                 }
                 
                 if(UI.gameState=="charSheet"){
-                    if(key==KeyEvent.VK_I){
+                    if(key==KeyBindings.k_info){
                         UI.gameState="view";
                     }
                 }
                 
                 if(UI.gameState=="map"){
-                    if(key==KeyEvent.VK_M){
+                    if(key==KeyBindings.k_map){
                         UI.gameState="view";
                     }
                 }

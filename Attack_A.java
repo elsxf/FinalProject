@@ -22,7 +22,7 @@ public class Attack_A extends Action_A{
         }
         if(!attacked.getInfo().getMob().getInfo().getFaction().equals(info.getFaction())){
             //see if attack hits
-            System.out.println(mob.getInfo().getHealth()[0]);
+            //System.out.println(mob.getInfo().getHealth()[0]);
             int toHit = Sight.dice(3,6,0)+info.getWeapon().getHitMod()+info.getSkills().get("m. attack")[0]
             -attacked.getInfo().getMob().getInfo().getSkills().get("dodge")[0]*2;
             attacked.getInfo().getMob().getInfo().giveEXP("dodge", (int)(Sight.skillCalc(toHit-10)));
