@@ -10,6 +10,7 @@ public class TileProperty extends Property
     private String[] flags;
     private String name;
     private Mob mob;
+    private ArrayList<Item> items = new ArrayList<Item>();
     private ImageIcon hitFlash=null;
     private int hitFlashTimer=0;
     private Transform transform;
@@ -59,6 +60,9 @@ public class TileProperty extends Property
     }
     public Transform getTransform(){
         return this.transform;
+    }
+    public ArrayList<Item> getItems(){
+        return this.items;
     }
     public void setHitFlash(ImageIcon hitFlash){
         this.hitFlash = hitFlash;

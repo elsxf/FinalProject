@@ -7,10 +7,13 @@
         
         Map map1;// = new Map();//MapReader.makeMap("./raw/Test_M.txt");
         Mob p;// = new Mob(5+map1.getStart()[0]*11,5+map1.getStart()[1]*11,map1, new MobProperty(MobList.ALLMOBS[0]));
+        int mapIndex;
+        Map[] bigMap;
         public GamePanel(){
             UI.makeViewPanel();
             UI.makeCharSheetPanel();
             UI.makeMapPanel();
+            UI.makeWinPanel();
             //map1.mobList.add(e);
             setBackground(Color.BLACK);
             addKeyListener(new KeyCheck());
@@ -19,7 +22,9 @@
         }
         
         public void gameStart(){
-            map1 = new Map();
+            bigMap = new Map[]{new Map(), new Map()};
+            map1 = bigMap[bigMap.length-1];
+            mapIndex=bigMap.length-1;
             p = new Mob(5+map1.getStart()[0]*11,5+map1.getStart()[1]*11,map1, new MobProperty(MobList.ALLMOBS[0]));
             UI.setMap(map1);
             UI.setPlayer(p);
@@ -47,7 +52,9 @@
                 UI.drawMapPanel();
                 this.add(UI.getMapPanel(), BorderLayout.PAGE_START);//dont know why it works dont know how it works, but game breaks when using borderlayout.center
             }
-                     
+            if(UI.gameState.equals("win")){
+                this.add(UI.getWinPanel());
+            }
             Toolkit.getDefaultToolkit().sync();//magic command makes animation smooth is called after drawing is done
             
             updateUI();//update sprite changes
@@ -91,6 +98,23 @@
                     }
                     if(key==KeyBindings.k_map){
                         UI.gameState="map";
+                        return;
+                    }
+                    if(key==KeyBindings.k_up){
+                        if(!map1.tileMap.get(p.getX()).get(p.getY()).getInfo().testFlag("[STAIRUP]")){
+                            if(mapIndex!=0){
+                                mapIndex--;
+                                map1=bigMap[mapIndex];
+                                map1.makeRoom(p.getX()/11,p.getY()/11,"./raw/maps/Start_M.txt", 0);
+                                UI.setMap(map1);
+                                p.setMap(map1);
+                                UI.setPlayer(p);
+                                p.giveMap();
+                            }
+                            else{
+                                UI.gameState="win";
+                            }
+                        }
                         return;
                     }
                 }

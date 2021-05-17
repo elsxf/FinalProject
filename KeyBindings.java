@@ -15,4 +15,6 @@ public class KeyBindings{
     public static final int k_close = KeyEvent.VK_C;
     public static final int k_map = KeyEvent.VK_M;
     public static final int k_info = KeyEvent.VK_I;
+    public static final int k_up = KeyEvent.VK_U;
+    public static final int k_down = KeyEvent.VK_Y;
 }

@@ -19,4 +19,8 @@ public class Sprites{
    public static final ImageIcon MISSFLASH_SP = new ImageIcon("./sprites/missflash.png");
    public static final ImageIcon DOORC_SP = new ImageIcon("./sprites/door.png");
    public static final ImageIcon DOORO_SP = new ImageIcon("./sprites/doorO.png");
+   public static final ImageIcon CLOTH_SP = new ImageIcon("./sprites/cloth.png");
+   public static final ImageIcon UPSTAIR_SP = new ImageIcon("./sprites/upstair.png");
+   public static final ImageIcon DOWNSTAIR_SP = new ImageIcon("./sprites/downstair.png");
+   public static final ImageIcon WARNINGWALL_SP = new ImageIcon("./sprites/warning.png");
 }

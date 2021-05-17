@@ -32,6 +32,9 @@ public class Mob
     public Map getMap(){
         return(this.map);
     }
+    public void setMap(Map map){
+        this.map=map;
+    }
     public MobProperty getInfo(){
         //System.out.println(this.info);
         return(this.info);

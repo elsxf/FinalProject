@@ -26,6 +26,7 @@ public class UI{
     private static JLabel[][] viewTiles = new JLabel[9][];//array of jlabels to store tile images
     private static JLabel[][] viewMobs = new JLabel[9][];//array of jlabels to store tile mobs
     private static JLabel[][] viewEffects = new JLabel[9][];
+    private static JLabel[][] viewItems = new JLabel[9][];
     private static JLabel[] textArray = new JLabel[5];
     private static JLabel[] barsArray = new JLabel[5];
     private static JLabel[] otherArray = new JLabel[5];
@@ -46,6 +47,9 @@ public class UI{
     public static int mapTextBlinkTimer = 0;
     public static boolean mapTextBlinkHolder = false;
     //</mapPanel>
+    //<winPanel>
+    public static JPanel winScreen = new JPanel();
+    //</winPanel>
 
     public static void status(int hp, int hpMax, Weapon weapon){
         barsArray[0].setText(Sight.toBars(hp,hpMax,5));
@@ -106,16 +110,19 @@ public class UI{
             viewTiles[i]=(new JLabel[9]);
             viewMobs[i]=(new JLabel[9]);
             viewEffects[i]=(new JLabel[9]);
+            viewItems[i]=(new JLabel[9]);
             c.gridx=i;
             for(int j = 0;j<9;j++){
                 //System.out.println(p.getX()-4+i+" "+(p.getY()-4+j));
                 viewTiles[i][j]=new JLabel();
                 viewMobs[i][j]=new JLabel();
                 viewEffects[i][j]=new JLabel();
+                viewItems[i][j]=new JLabel();
                 c.gridy=j;
                 viewPanel.add(viewTiles[i][j],c,tilelayer);
                 viewPanel.add(viewMobs[i][j],c,moblayer);
                 viewPanel.add(viewEffects[i][j],c,effectlayer);
+                viewPanel.add(viewMobs[i][j],c,itemlayer);
             }
         }
         String[] text = new String[]{"health","organs"," blood","hunger","thirst"};
@@ -196,6 +203,7 @@ public class UI{
                         viewTiles[4+j[0]][4+j[1]].setIcon(Sprites.BLANK_SP);
                         viewMobs[4+j[0]][4+j[1]].setIcon(null);
                         viewEffects[4+j[0]][4+j[1]].setIcon(null);
+                        viewItems[4+j[0]][4+j[1]].setIcon(null);
                     }
                     continue;
                 }
@@ -243,6 +251,12 @@ public class UI{
                 }
                 else{
                     viewEffects[4+j[0]][4+j[1]].setIcon(null);
+                }
+                if(theTile.getInfo().getItems().size()!=0){
+                    viewMobs[4+j[0]][4+j[1]].setIcon(theTile.getInfo().getItems().get(0).getInfo().getImage());
+                }
+                else{
+                    viewItems[4+j[0]][4+j[1]].setIcon(null);
                 }
             }
         }
@@ -334,6 +348,12 @@ public class UI{
             }
         }
         mapText.setText(text);
+    }
+    public static void makeWinPanel(){
+        winScreen.add(new JLabel("you escaped. Good job."));
+    }
+    public static JPanel getWinPanel(){
+        return winScreen;
     }
 
     

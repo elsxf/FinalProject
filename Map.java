@@ -9,6 +9,7 @@ public class Map//each map is a massive 2d arraylist filled with tiles, storing 
     public ArrayList<Mob> mobList= new ArrayList<Mob>();//ALL mobs(not player) go here(can make it map specific it it becomes a problem)
     private int startX;
     private int startY;
+    private boolean bossRoomPlaced = false;
     public Room[][] theRooms;
     public Map(){
     
@@ -28,8 +29,8 @@ public class Map//each map is a massive 2d arraylist filled with tiles, storing 
                 
             }
         }*/
-        //theRooms = new Room[Sight.randint(2,5)][Sight.randint(2,5)];
-        theRooms = new Room[5+Sight.randint(2,5)][5+Sight.randint(2,5)];
+        theRooms = new Room[7][7];
+        //theRooms = new Room[5+Sight.randint(2,5)][5+Sight.randint(2,5)];
         
         for(int i = 0; i<theRooms.length; i++){
             for(int x = 0; x<11; x++){
@@ -107,7 +108,18 @@ public class Map//each map is a massive 2d arraylist filled with tiles, storing 
         if(theRooms[x+relX][y+relY]!=null){//dont replace rooms
             return;
         }
-        makeRoom(x+relX, y+relY, RoomList.allRooms[Sight.randint(0,RoomList.allRooms.length-1)], dir);
+        String newRoomString;
+        if(bossRoomPlaced){
+            newRoomString = RoomList.allRooms[Sight.randint(0,RoomList.allRooms.length-2)];
+        }
+        else{
+           newRoomString = RoomList.allRooms[Sight.randint(0,RoomList.allRooms.length-1)];
+           if(newRoomString.equals("./raw/maps/Boss_M.txt")){
+               bossRoomPlaced = true;
+            }
+        }
+        
+        makeRoom(x+relX, y+relY, newRoomString, dir);
         for(Mob m : this.mobList){
             m.giveMap();
         }
